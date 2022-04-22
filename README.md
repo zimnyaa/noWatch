@@ -1,6 +1,10 @@
 # noWatch
-**noWatch** is an interactive console application that allows tampering with EDR userland hooks and testing EDR evasion capabilities. It is mean to be used as a standalone binary or converted with `donut` and remotely injected. In general, it is meant as a drop-in replacement for testing what C2 framework features can get detected without deploying C2 in an Internet-isolated detection lab.
+---
+
+**noWatch** is an interactive console application that allows tampering with EDR userland hooks and testing EDR detection capabilities. It is meant to be used as a standalone binary or converted with `donut` and remotely injected. In general, it is designed as a drop-in replacement for testing what C2 framework features can get detected without deploying C2 in an Internet-isolated detection lab.
 Usage demo:
+
+---
 ![nowatch_0 0 1](https://user-images.githubusercontent.com/502153/164777170-41ed8161-f646-4336-a124-1b31c4c0b35c.gif)
 
 
