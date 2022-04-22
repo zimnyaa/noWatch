@@ -8,7 +8,7 @@ Usage demo:
 ![nowatch_0 0 1](https://user-images.githubusercontent.com/502153/164777170-41ed8161-f646-4336-a124-1b31c4c0b35c.gif)
 
 
-**nowatch** capabilities are divided into discovery commands and attacks. Discovery commands are simple and few:
+**noWatch** capabilities are divided into discovery commands and attacks. Discovery commands are simple and few:
 ```
          modname -> find module name for address (discovery)
           showrx -> show rx pages in the current process (discovery)
@@ -24,7 +24,7 @@ Usage demo:
             help -> show help (util)
 ```
 
-attacks are pretty simple, as they are meant to test various malicious activity primitives
+Attacks are pretty simple, as they are meant to test various malicious activity primitives:
 ```
      crt_inject -> execute msgbox remotely with CreateRemoteThread
          loadclr -> load a demo C# assembly to the process
@@ -45,7 +45,7 @@ attacks are pretty simple, as they are meant to test various malicious activity 
 # dependencies&building
 `$ nimble install winim ptr_math memlib`
 
-- Distorm3 from nimble is also used, but it had to be patched, so it's shipped here as well. In general, disassembly in **noWatch** is really bad and unreliable. Use a proper debugger if you can.
+- Distorm3 from nimble is also used, but it had to be patched, so it's shipped here as well. In general, disassembly in **noWatch** is really bad and unreliable, so use a proper debugger if you can.
 
 ```
 $ nim c --threads:on --passL:"-static-libgcc -static -lpthread" --app:gui --threadAnalysis:off .\main.nim
