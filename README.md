@@ -1,5 +1,8 @@
 # noWatch
 **noWatch** is an interactive console application that allows tampering with EDR userland hooks and testing EDR evasion capabilities. It is mean to be used as a standalone binary or converted with `donut` and remotely injected. In general, it is meant as a drop-in replacement for testing what C2 framework features can get detected without deploying C2 in an Internet-isolated detection lab.
+Usage demo:
+![nowatch_0 0 1](https://user-images.githubusercontent.com/502153/164777170-41ed8161-f646-4336-a124-1b31c4c0b35c.gif)
+
 
 **nowatch** capabilities are divided into discovery commands and attacks. Discovery commands are simple and few:
 ```
@@ -37,15 +40,16 @@ attacks are pretty simple, as they are meant to test various malicious activity 
 
 # dependencies&building
 `$ nimble install winim ptr_math memlib`
-Distorm3 from nimble is also used, but it had to be patched, so it's shipped here as well.
+
+- Distorm3 from nimble is also used, but it had to be patched, so it's shipped here as well. In general, disassembly in **noWatch** is really bad and unreliable. Use a proper debugger if you can.
 
 ```
 $ nim c --threads:on --passL:"-static-libgcc -static -lpthread" --app:gui --threadAnalysis:off .\main.nim
 $ nim c --nomain --app:lib -o:.\resources\stub.dll .\resources\stub.nim
 ```
 # credits and offensive Nim resources
-https://github.com/byt3bl33d3r/OffensiveNim
-https://github.com/gdabah/distorm
-https://github.com/khchen/winim
-https://github.com/khchen/memlib
-`sliverarmory`, `trustedsec` and `rsmudge` for the bofs
+- https://github.com/byt3bl33d3r/OffensiveNim
+- https://github.com/gdabah/distorm
+- https://github.com/khchen/winim
+- https://github.com/khchen/memlib
+- `sliverarmory`, `trustedsec` and `rsmudge` for the bofs
