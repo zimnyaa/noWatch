@@ -51,6 +51,7 @@ Attacks are pretty simple, as they are meant to test various malicious activity 
 $ nim c --threads:on --passL:"-static-libgcc -static -lpthread" --app:gui --threadAnalysis:off .\main.nim
 $ nim c --nomain --app:lib -o:.\resources\stub.dll .\resources\stub.nim
 ```
+For injection, you'll need to compile the executable with a relocation table with `--passL:-Wl,--dynamicbase`.
 # credits and offensive Nim resources
 - https://github.com/byt3bl33d3r/OffensiveNim
 - https://github.com/gdabah/distorm
