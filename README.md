@@ -2,6 +2,10 @@
 ---
 https://tishina.in/execution/nowatch-prealpha-release
 **noWatch** is an interactive console application that allows tampering with EDR userland hooks and testing EDR detection capabilities. It is meant to be used as a standalone binary or converted with `donut` and remotely injected. In general, it is designed as a drop-in replacement for testing what C2 framework features can get detected without deploying C2 in an Internet-isolated detection lab.
+> update: integrated SW2 and SW2 with trampolines to test RX allocations
+> update: integrated rad9800's DLL load proxying
+> update: added a createthread command for CreateThread and directthread/indirectthread for thread creation 
+
 Usage demo:
 
 ---
